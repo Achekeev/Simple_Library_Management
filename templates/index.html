@@ -2,8 +2,16 @@
 
 {% block content %}<br>
     {% for book in books %}
-        {{ book.book_name }}
-        {{ book.author }}
-        {{ book.book_status }}
+        <h1>
+            {{ book.book_name }}
+            {{ book.author }}
+            {{ book.book_status }}
+        </h1>
+        {% if not book.is_available %}
+            <form action="{% url 'reset_expiry' pk=book.id %}" method="post">
+                {% csrf_token %}
+                <button>Reset expiry</button>
+            </form>
+        {% endif %}
     {% endfor %}
 {% endblock %}
