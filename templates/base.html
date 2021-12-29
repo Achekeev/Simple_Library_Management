@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}
+            {{ page_title|default:"Artem's Library" }}
+        {% endblock %}
+    </title>
+</head>
+<body>{% csrf_token %}
+<header>
+    <h1 style="text-align: center">Artem's Library</h1>
+    <a href="{% url 'add_book' %}">Добавить Книгу</a>
+    <a href="{% url 'add_reader' %}">Добавить Читателя</a>
+    <a href="{% url 'give_book' %}">Выдать Книгу</a>
+    <a href="{% url 'Main_Page'%}">Главная</a>
+</header>
+
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
