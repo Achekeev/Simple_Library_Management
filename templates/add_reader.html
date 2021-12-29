@@ -1,21 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}<br>
 
-<div class="container">
-    <form method="POST"> {% csrf_token %}
-    <div class="row mt-4">
-        <div class="form-group col-md-12">
-            <label><i style="font-weight: bold;">Reader Name</i></label>
-            <input type="text" class="form-control mt-2" name="name" placeholder="Enter name" required>
-        </div>
+    <div class="container">
+        <form method="POST"> {% csrf_token %}
+            <div class="row mt-4">
+                <div class="form-group col-md-12">
+                    <label><i style="font-weight: bold;">Reader Name</i></label>
+                    <input type="text" class="form-control mt-2" name="name" placeholder="Enter name" required>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="form-group col-md-12">
+                    <label><i style="font-weight: bold;">Phone Number</i></label>
+                    <input type="text" class="form-control mt-2" name="phone_number" placeholder="Enter phone number"
+                           required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-outline-primary mt-4">Add Book</button>
+        </form>
+
+        {% if form.errors %}
+            {% for field, error_message in form.errors.items %}
+                <h1>{{ field }}: {{ error_message }}</h1>
+            {% endfor %}
+        {% endif %}
     </div>
-    <div class="row mt-4">
-        <div class="form-group col-md-12">
-            <label><i style="font-weight: bold;">Phone Number</i></label>
-            <input type="text" class="form-control mt-2" name="phone_number" placeholder="Enter phone number" required>
-        </div>
-    </div>
-    <button type="submit" class="btn btn-outline-primary mt-4">Add Book</button>
-    </form>
-</div>
 {% endblock %}

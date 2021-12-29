@@ -1,8 +1,17 @@
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
+from django.http.request import HttpRequest
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.views import View
 
-from .forms import GiveBookForm
-from .models import Book, Client, BookStatus
-from django.views import generic
+from .forms import (
+    ClientForm,
+    BookForm,
+    GiveBookForm,
+    TakeBookBackForm,
+    ResetExpiryForm
+)
+from .models import Book
 
 
 def index(request):
@@ -16,37 +25,104 @@ def book_list(request):
     return render(request, 'book_list.html', {'books': books})
 
 
-def add_reader(request):
-    if request.method == "POST":
-        name = request.POST['name']
-        phone_number = request.POST['phone_number']
-        reader = Client.objects.create(name=name, phone_number=phone_number)
-        reader.save()
-        alert = True
-        return render(request, 'add_reader.html', {'alert': alert})
-    return render(request, 'add_reader.html')
+class AddReaderView(View):
+    def get(self, request):
+        return render(request, 'add_reader.html')
+
+    def post(self, request):
+        form = ClientForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            context = {
+                "alert": True
+            }
+            return render(request, 'add_reader.html', context)
+
+        context = {
+            "form": form
+        }
+        return render(request, 'add_reader.html', context)
 
 
-def add_book(request):
-    if request.method == 'POST':
-        book_name = request.POST['book_name']
-        author = request.POST['author']
-        isbn = request.POST['isbn']
-        book_status = 'Доступна'
-        books = Book.objects.get_or_create(book_name=book_name, author=author, isbn=isbn, book_status=book_status)
-        books.save()
-        alert = True
-        return render(request, 'add_book.html', {'alert': alert})
-    return render(request, 'add_book.html')
+class AddBookView(View):
+    def get(self, request):
+        return render(request, 'add_book.html')
+
+    def post(self, request):
+        form = BookForm(request.POST)
+
+        if (form.is_valid()):
+            form.save()
+            context = {
+                "alert": True
+            }
+            return render(request, 'add_book.html', context)
+
+        context = {
+            "form": form
+        }
+        return render(request, 'add_book.html', context)
 
 
-def give_book(request):
-    form = GiveBookForm()
-    if request.method == 'POST':
-        book_name = request.POST['book_name']
-        reader = request.POST['reader']
-        books = BookStatus.objects.all()
-        status = BookStatus.objects.create(book_name=book_name, reader=reader, book_status=books)
-        status.save()
-        alert = True
-    return render(request, 'give_book.html')
+class GiveBookView(View):
+    def get(self, request):
+        form = GiveBookForm()
+        context = {
+            "form": form
+        }
+        return render(request, "give_book.html", context)
+
+    def post(self, request: HttpRequest):
+        form = GiveBookForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect(reverse("Main_Page"))
+
+        context = {
+            "form": form
+        }
+        return render(request, "give_book.html", context)
+
+
+class TakeBookBackView(View):
+    def get(self, request):
+        form = TakeBookBackForm()
+        context = {
+            "form": form
+        }
+        return render(request, "take_book_back.html", context)
+
+    def post(self, request):
+        form = TakeBookBackForm(request.POST)
+        context = {
+            "form": form
+        }
+
+        if form.is_valid():
+            print("Valid!")
+            form.save()
+            return redirect(reverse("give_book"))
+
+        return render(request, "take_book_back.html", context)
+
+
+class ResetExpiryView(View):
+    def get(self, request):
+        permitted_methods = (
+            "GET",
+        )
+        return HttpResponseNotAllowed(permitted_methods=permitted_methods)
+
+    def post(self, request, pk=None):
+        form = ResetExpiryForm({"book": pk})
+
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(redirect_to=reverse("Main_Page"), )
+
+        errors_string = ' '.join(form.errors.values())
+        return HttpResponse(f"Invalid form, "
+                            f"couldn't reset expiry, "
+                            f"these are errors {errors_string}")
