@@ -1,10 +1,14 @@
 from django.shortcuts import render
+
+from .forms import GiveBookForm
 from .models import Book, Client, BookStatus
 from django.views import generic
 
 
 def index(request):
-    return render(request, 'index.html')
+    books = Book.objects.all()
+    context = {'books': books}
+    return render(request, 'index.html', context)
 
 
 def book_list(request):
@@ -36,3 +40,13 @@ def add_book(request):
     return render(request, 'add_book.html')
 
 
+def give_book(request):
+    form = GiveBookForm()
+    if request.method == 'POST':
+        book_name = request.POST['book_name']
+        reader = request.POST['reader']
+        books = BookStatus.objects.all()
+        status = BookStatus.objects.create(book_name=book_name, reader=reader, book_status=books)
+        status.save()
+        alert = True
+    return render(request, 'give_book.html')

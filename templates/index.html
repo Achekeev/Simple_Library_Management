@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
-{% block content %}
-
+{% block content %}<br>
+    {% for book in books %}
+        {{ book.book_name }}
+        {{ book.author }}
+        {{ book.book_status }}
+    {% endfor %}
 {% endblock %}
