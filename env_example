@@ -1,0 +1,6 @@
+POSTGRES_DB='library'
+POSTGRES_USER='library_admin'
+POSTGRES_PASS='library1245'
+POSTGRES_HOST='db'
+POSTGRES_PORT='5432'
+SECRET_KEY='django-insecure-5@lz$*)=s$bc9@e65)l&()fk8n_r!7g07p+&lcehp0nf_5zp$%'
