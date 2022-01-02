@@ -4,7 +4,7 @@ from . import views
 from .views import index, book_list, AddReaderView, AddBookView
 
 urlpatterns = (
-    path('catalog/', index, name='Main_Page'),
+    path('', index, name='Main_Page'),
     path('book-list/', book_list, name='books-list'),
     path('add_reader/', AddReaderView.as_view(), name='add_reader'),
     path('add_book/', AddBookView.as_view(), name='add_book'),
